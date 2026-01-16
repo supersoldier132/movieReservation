@@ -20,5 +20,7 @@ function membership(response) {
 
 }
 
+let handle = {};
+
 handle["/"] = reservationMain
 handle["./membership.html"] = membership
