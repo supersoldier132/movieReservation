@@ -2,6 +2,7 @@ const fs = require('fs');
 const login_view = fs.readFileSync("./reservationLogin.html");
 const membership_view = fs.readFileSync("./membership.html");
 const main_view = fs.readFileSync("./reservationMain.html")
+const detail_view = fs.readFileSync("./reservationDetail.html");
 
 const database = require('./database/database.js');
 
@@ -28,6 +29,28 @@ async function reservationData(activation, value, table, column) {
         }
     }
 }
+
+async function reservationDetail(response, id) {
+    console.log("requestHandler.js - CheckId /// id : " + id);
+
+    let getDetail = await reservationData('SELECT', 'WHERE perfomance_index=' + id, 'perfomance', '*');
+    let result = getDetail;
+
+    let filePath = path.join(__dirname, 'reservationDetail.html');
+    let html = fs.readFileSync(filePath, 'utf-8');
+
+    html += `
+        <script>
+            const reservationData = ${JSON.stringify(result)};
+            console.log("reservationData :", reservationData);
+            document.getElementById("data").innerText = JSON.stringify(reservationData);
+        </script>
+    `;
+
+    response.writeHead(200, { 'Content-Type': 'text/html' });
+    response.end(html);
+}
+
 
 function reservationLogin(response) {
     console.log('main');
@@ -84,6 +107,19 @@ function reservationLogincss(response) {
 
 function reservationMaincss(response) {
     fs.readFile('./reservationMain.css', function (err, data) {
+        if (err) {
+            response.writeHead(404);
+            response.end('CSS file not found');
+        } else {
+            response.writeHead(200, { 'Content-Type': 'text/css' });
+            response.write(data);
+            response.end();
+        }
+    });
+}
+
+function reservationDetailcss(response) {
+    fs.readFile('./reservationDetail.css', function (err, data) {
         if (err) {
             response.writeHead(404);
             response.end('CSS file not found');
@@ -168,6 +204,7 @@ function piona(response) {
 let handle = {};
 
 handle["/"] = reservationMain
+handle["/"] = reservationMain
 handle["/reservationMain.css"] = reservationMaincss
 
 handle["/reservationLogin.html"] = reservationLogin
@@ -175,6 +212,9 @@ handle["/reservationLogin.css"] = reservationLogincss
 
 handle["/membership.html"] = membership
 handle["/membership.css"] = membershipcss
+
+handle["/reservationDetail.html"] = reservationDetail
+handle["/reservationDetail.css"] = reservationDetailcss
 
 handle["/img/songa.png"] = songa
 handle["/img/banel.png"] = banel
