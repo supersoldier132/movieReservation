@@ -135,16 +135,50 @@ async function login(response, id, pwd) {
 
 }
 
+function songa(response) {
+
+    fs.readFile('./img/songa.png', function (err, data) {
+
+        response.writeHead(200, { 'Content-Type': 'text/html' }); //헤더 설정
+        response.write(data); //본문 설정
+        response.end(); //응답 종료
+    })
+}
+
+function banel(response) {
+
+    fs.readFile('./img/banel.png', function (err, data) {
+
+        response.writeHead(200, { 'Content-Type': 'text/html' }); //헤더 설정
+        response.write(data); //본문 설정
+        response.end(); //응답 종료
+    })
+}
+
+function piona(response) {
+
+    fs.readFile('./img/piona.png', function (err, data) {
+
+        response.writeHead(200, { 'Content-Type': 'text/html' }); //헤더 설정
+        response.write(data); //본문 설정
+        response.end(); //응답 종료
+    })
+}
+
 let handle = {};
 
-handle["/"] = reservationLogin
+handle["/"] = reservationMain
+handle["/reservationMain.css"] = reservationMaincss
+
+handle["/reservationLogin.html"] = reservationLogin
 handle["/reservationLogin.css"] = reservationLogincss
 
 handle["/membership.html"] = membership
 handle["/membership.css"] = membershipcss
 
-handle["/reservationMain.html"] = reservationMain
-handle["/reservationMain.css"] = reservationMaincss
+handle["/img/songa.png"] = songa
+handle["/img/banel.png"] = banel
+handle["/img/piona.png"] = piona
 
 handle["/Login"] = login
 handle["/CheckId"] = CheckId

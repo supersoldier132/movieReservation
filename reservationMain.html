@@ -8,30 +8,37 @@
     </style>
 
 <body>
+    
+    <div class="login&order">
+        <input type="button" value="로그인" onclick="location.href='./reservationLogin.html'"> 
+        <input type="button" value="주문 내역">
+        
+    </div>
+
     <h1>공연 예매 사이트</h1>
 
     <div class="reservationList">
-        <div class="list">
+        <div class="list" onclick="location.href='detail?id=1'">
 
-            <img class="reservationImg">
+            <img class="reservationImg" src="./img/songa.png" width="200px" height="200px">
             <p>2026-01-16 00:00:00</p>
             <p>Programmers 특강</p>
             <p>300,000원</p>
 
         </div>
 
-        <div class="list">
+        <div class="list" onclick="location.href='detail?id=2'">
 
-            <img class="reservationImg">
+            <img class="reservationImg" src="./img/banel.png" width="200px" height="200px">
             <p>2026-01-16 00:00:00</p>
             <p>Docker 특강</p>
             <p>200,000원</p>
 
         </div>
 
-        <div class="list">
+        <div class="list" onclick="location.href='detail?id=3'">
 
-            <img class="reservationImg">
+            <img class="reservationImg" src="./img/piona.png" width="200px" height="200px">
             <p>2026-01-16 00:00:00</p>
             <p>JS 특강</p>
             <p>100,000원</p>

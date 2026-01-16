@@ -52,7 +52,7 @@ async function startMembership(id, pwd, name){
 alert('입력되지 않은 칸이 있습니다.')
     } else {
         const res = await fetch('./startMembership?id=' + encodeURIComponent(id) + '&pwd=' + encodeURIComponent(pwd) + '&name=' + encodeURIComponent(name))
-        location.href='./'
+        location.href='./reservationLogin.html'
     }
 }
 
