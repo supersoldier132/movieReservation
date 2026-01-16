@@ -6,7 +6,8 @@
     <meta charset="utf-8">
     <title>Membership</title>
     <link rel="stylesheet" href="membership.css">
-
+    <!--<script src="membership.js" defer></script>
+-->
 </head>
 
 <body>
@@ -16,12 +17,46 @@
     <div class="membership">
 
         <input id="user_id" placeholder="아이디"><br>
-        <input id="passworld" placeholder="비밀번호"><br>
+        <input id="pwd" placeholder="비밀번호"><br>
         <input id="name" placeholder="이름"><br>
-        <input id="Duplicate test" type="button" value="아이디 중복 검사">
-        <input id="membership" type=button value="회원가입" onclick="location.href='./reservationMain.html'">
+        <label id="idchecked">중복검사 미완료</label><br>
+        <input id="idCheck" type="button" value="아이디 중복 검사" onclick="startCheckId(document.getElementById('user_id').value.trim())">
+        <input id="membership" type=button value="회원가입" onclick="startMembership(document.getElementById('user_id').value.trim(), document.getElementById('pwd').value.trim(), document.getElementById('name').value.trim())" disabled>
 
     </div>
+
+    <script>
+        async function startCheckId(id) {
+    if (id === '') {
+        alert('아이디 입력칸이 비었습니다.');
+        return;
+    }
+
+    const res = await fetch('./CheckId?id=' + encodeURIComponent(id));
+    const data = await res.json();
+
+    if (data.result === "NO") {
+        alert("중복된 아이디 입니다.");
+    } else {
+        alert("가입 가능한 아이디 입니다.");
+        document.getElementById("idchecked").innerText = "중복검사 완료"
+        document.getElementById("user_id").disabled = true;
+        document.getElementById("idCheck").disabled = true;
+        document.getElementById("membership").disabled = false;
+    }
+}
+
+
+async function startMembership(id, pwd, name){
+    if (id === '' || pwd === '' || name === ''){
+alert('입력되지 않은 칸이 있습니다.')
+    } else {
+        const res = await fetch('./startMembership?id=' + encodeURIComponent(id) + '&pwd=' + encodeURIComponent(pwd) + '&name=' + encodeURIComponent(name))
+        location.href='./'
+    }
+}
+
+    </script>
 
 </body>
 

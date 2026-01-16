@@ -1,11 +1,47 @@
-const fs=require('fs');
-const main_view = fs.readFileSync("./reservationMain.html");
+const fs = require('fs');
+const login_view = fs.readFileSync("./reservationLogin.html");
 const membership_view = fs.readFileSync("./membership.html");
+const main_view = fs.readFileSync("./reservationMain.html")
+
+const database = require('./database/database.js');
+
+async function reservationData(activation, value, table, column) {
+    console.log('reservationData Start');
+    if (activation == 'SELECT') {
+
+        try {
+            const result = database.executeQuery('SELECT ' + column + ' FROM ' + table);
+            console.log((await result));
+            return (await result);
+        } catch (error) {
+            console.error('Error fetching product info:', error);
+        }
+
+    } else if (activation == 'INSERT') {
+
+        try {
+            const result = await database.executeQuery('INSERT INTO ' + table + ' VALUES ' + value);
+            console.log(await result);
+            return 'OK';
+        } catch (error) {
+            console.error('Error fetching product info:', error);
+        }
+    }
+}
+
+function reservationLogin(response) {
+    console.log('main');
+
+    response.writeHead(200, { 'content-Type': ' text/html' });
+    response.write(login_view);
+    response.end();
+
+}
 
 function reservationMain(response) {
-    console.log('main');
-    
-    response.writeHead(200, { 'content-Type' : ' text/html'});
+    console.log('reservationMain');
+
+    response.writeHead(200, { 'content-Type': 'text/html' });
     response.write(main_view);
     response.end();
 
@@ -14,13 +50,104 @@ function reservationMain(response) {
 function membership(response) {
     console.log('membership');
 
-    response.writeHead(200, { 'content-Type' : 'text/html'});
+    response.writeHead(200, { 'content-Type': 'text/html' });
     response.write(membership_view);
     response.end();
 
 }
 
+function membershipcss(response) {
+    fs.readFile('./membership.css', function (err, data) {
+        if (err) {
+            response.writeHead(404);
+            response.end('CSS file not found');
+        } else {
+            response.writeHead(200, { 'Content-Type': 'text/css' });
+            response.write(data);
+            response.end();
+        }
+    });
+}
+
+function reservationLogincss(response) {
+    fs.readFile('./reservationLogin.css', function (err, data) {
+        if (err) {
+            response.writeHead(404);
+            response.end('CSS file not found');
+        } else {
+            response.writeHead(200, { 'Content-Type': 'text/css' });
+            response.write(data);
+            response.end();
+        }
+    });
+}
+
+function reservationMaincss(response) {
+    fs.readFile('./reservationMain.css', function (err, data) {
+        if (err) {
+            response.writeHead(404);
+            response.end('CSS file not found');
+        } else {
+            response.writeHead(200, { 'Content-Type': 'text/css' });
+            response.write(data);
+            response.end();
+        }
+    });
+}
+
+async function CheckId(response, needCheckId) {
+    console.log("requestHandler.js - CheckId");
+    let getids = await reservationData('SELECT', null, 'userinfo', 'user_id');
+    let result = "OK";
+    for (let i = 0; i < getids.length; i++) {
+        if (getids[i].user_id === needCheckId) {
+            result = "NO";
+            break;
+        }
+    }
+    response.writeHead(200, { 'Content-Type': 'application/json' });
+    response.end(JSON.stringify({ result }));
+}
+
+async function startMembership(response, id, pwd, name) {
+    let getIndex = await reservationData('SELECT', null, 'userinfo', 'user_index');
+    let index = getIndex.length + 1;
+    console.log('index = ' + index);
+    await reservationData('INSERT', "('" + index + "', '" + id + "', '" + name + "', '" + pwd + "', '" + new Date().toISOString().split('T')[0] + "')", 'userinfo', null);
+
+    response.writeHead(200, { 'Content-Type': 'application/json' });
+    response.end(JSON.stringify({ getIndex }));
+}
+
+async function login(response, id, pwd) {
+    console.log("requestHandler.js - CheckId /// id : " + id + "///pwd : " + pwd);
+    let getids = await reservationData('SELECT', null, 'userinfo', 'user_id, password');
+    let result = "NO";
+    for (let i = 0; i < getids.length; i++) {
+        if (getids[i].user_id === id && getids[i].password === pwd) {
+            result = "OK";
+            console.log('result : ' + result)
+            break;
+        }
+    }
+    response.writeHead(200, { 'Content-Type': 'application/json' });
+    response.end(JSON.stringify({ result }));
+
+}
+
 let handle = {};
 
-handle["/"] = reservationMain
-handle["./membership.html"] = membership
+handle["/"] = reservationLogin
+handle["/reservationLogin.css"] = reservationLogincss
+
+handle["/membership.html"] = membership
+handle["/membership.css"] = membershipcss
+
+handle["/reservationMain.html"] = reservationMain
+handle["/reservationMain.css"] = reservationMaincss
+
+handle["/Login"] = login
+handle["/CheckId"] = CheckId
+handle["/startMembership"] = startMembership
+
+exports.handle = handle;

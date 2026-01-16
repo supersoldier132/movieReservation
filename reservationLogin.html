@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Someone's Reservation Login</title>
+    <link rel="stylesheet" href="reservationLogin.css">
+</head>
+
+<body>
+
+    <h1>welcome to Someone's Reservation</h1>
+
+    <div class="loginBox">
+
+        <input id="user_id" type="text" placeholder="아이디"><br>
+        <input id="pwd" type="password" placeholder="비밀번호"><br>
+        <input id="login" type="button" value="로그인" onclick="login(document.getElementById('user_id').value.trim(), document.getElementById('pwd').value.trim())">
+        <input id="membership" type=button value="회원가입" onclick="location.href='./membership.html'">
+
+    </div>
+
+    <script>
+
+        async function login(id, pwd) {
+            if (id === '' || pwd === '') {
+                alert('입력되지 않은 칸이 있습니다.')
+            } else {
+                const res = await fetch('./Login?id=' + encodeURIComponent(id) + '&pwd=' + encodeURIComponent(pwd))
+                const data = await res.json();
+                console.log('뭐냐 넌 : ' + data.result)
+                if (await data.result === 'OK') {
+                    location.href = './reservationMain.html'
+                } else {
+                    alert('아이디, 비밀번호가 올바르지 않습니다.')
+                }
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

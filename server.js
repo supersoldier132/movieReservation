@@ -10,7 +10,7 @@ function start(route, handle) {
             response.writeHead(200, { 'Content-Type': 'img/x-icon' }); //헤더 설정
             return response.end(); //응답 종료
         }
-        route(pathname, handle, response, queryData.productId);
+        route(pathname, handle, response, queryData.id, queryData.pwd, queryData.name);
     }
 
     http.createServer(onRequest).listen(8888); //서버 생성
